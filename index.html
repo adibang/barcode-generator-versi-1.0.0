@@ -519,6 +519,11 @@
         height: 50,
         margin: 10
       });
+    
+      
+    // Mengosongkan input berat setelah generate barcode
+      weightValue = '';
+      updateDisplay();
     }
 
     function updateDisplay() {
@@ -858,13 +863,17 @@
 
     function generateBarcodeFromProduct() {
       const productCode = document.getElementById('product-select').value;
-      const weight = parseFloat(document.getElementById('weight-input').value) || 0;
+      const weightInput = document.getElementById('weight-input');
+      const weight = parseFloat(weightInput.value) || 0;
+      
       if (!productCode || weight <= 0) {
         showNotification('Pilih produk dan masukkan berat yang valid!');
         return;
       }
+      
       const products = getProducts();
       const product = products.find(p => p.code === productCode);
+      
       if (product) {
         const totalBarcode = generateRetailBarcode(productCode, weight);
         JsBarcode("#pos-barcode", totalBarcode, {
@@ -874,6 +883,7 @@
           margin: 10,
           displayValue: true
         });
+        
         const popupContent = `
           <div class="product-label">
             <div class="product-name">${product.name}</div>
@@ -885,10 +895,15 @@
             </div>
           </div>
         `;
+        
         showProductPopup(popupContent);
         showNotification('Barcode berhasil dibuat');
+        
+        // Mengosongkan input berat setelah generate barcode
+        weightInput.value = '';
       }
     }
+
 
     /*******************************
      * Fungsi Pop Up untuk Informasi & Daftar Produk
